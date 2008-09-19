@@ -1,15 +1,22 @@
 #Install script for Rails Plugin Installation.
+
 begin
+  require 'installer/install_helper'
+  include RAMF::InstallHelper
+  
   require 'fileutils'
-  overwrite = true
+  
+  
+  unless defined?(RAILS_ROOT)
+    RAILS_ROOT = "./"
+  end
   
   puts "Installing RAMF..."
   
-  puts "RAILS_ROOT:#{RAILS_ROOT}"
   
-#  if !File.exist?('./config/initializers/ramf.rb')
-#    FileUtils.copy_file("./vendor/plugins/rubyamf/rails_installer_files/rubyamf_config.rb", "./config/rubyamf_config.rb", false)
-#  end
+  if !File.exist?(file = file_in_app('config/initializers/ramf_initializer.rb'))
+    FileUtils.copy_file(file_in_installer('ramf_initializer.rb'), file, false)
+  end
   
 rescue Exception=>e
   puts "Error installing RAMF rails plugin.:"
