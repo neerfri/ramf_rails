@@ -1,11 +1,9 @@
 #Install script for Rails Plugin Installation.
+require File.join(File.dirname(__FILE__),'installer/install_helper')
+include RAMF::InstallHelper
 
 begin
-  require 'installer/install_helper'
-  include RAMF::InstallHelper
-  
   require 'fileutils'
-  
   
   unless defined?(RAILS_ROOT)
     RAILS_ROOT = "./"
