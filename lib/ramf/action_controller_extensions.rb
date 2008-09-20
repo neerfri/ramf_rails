@@ -5,7 +5,7 @@ module RAMF::ActionControllerExtensions
     klass.class_eval do
       attr_reader :render_amf
       attr_accessor :request_amf
-      attr_accessor :rubyamf_params # this way they can always access the rubyamf_params
+      attr_accessor :ramf_params
     
       def render_with_amf(options = nil, &block)
         begin
