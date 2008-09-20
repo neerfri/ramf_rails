@@ -3,18 +3,15 @@ require File.join(File.dirname(__FILE__),'installer/install_helper')
 include RAMF::InstallHelper
 
 begin
-  require 'fileutils'
-  
   unless defined?(RAILS_ROOT)
     RAILS_ROOT = "./"
   end
   
   puts "Installing RAMF..."
+  create_file_unless_exists!('config/initializers/ramf_initializer.rb')
+  create_file_unless_exists!('app/controllers/ramf_controller.rb')
+  create_file_unless_exists!('app/views/ramf/gateway.html.erb')
   
-  
-  if !File.exist?(file = file_in_app('config/initializers/ramf_initializer.rb'))
-    FileUtils.copy_file(file_in_installer('ramf_initializer.rb'), file, false)
-  end
   
 rescue Exception=>e
   puts "Error installing RAMF rails plugin.:"
