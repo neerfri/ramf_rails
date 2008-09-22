@@ -1,9 +1,8 @@
 module RAMF::ActionControllerExtensions
   
   def self.included(klass)
-#    klass.extend(InstanceMethods)
     klass.class_eval do
-      attr_reader :render_amf
+      attr_reader :render_amf, :rescued_exception
       attr_accessor :request_amf
       attr_accessor :ramf_params
     
@@ -23,6 +22,15 @@ module RAMF::ActionControllerExtensions
       end
       alias_method_chain :render, :amf
       
+      def rescue_action_with_amf(e)
+        respond_to do |format|
+          format.amf {@rescued_exception = e}
+          format.html {rescue_action_without_amf(e)}
+        end
+      end
+      alias_method_chain :rescue_action, :amf
+      
+      
       
       #Higher level "credentials" method that returns credentials wether or not 
       #it was from setRemoteCredentials, or setCredentials  
@@ -33,6 +41,10 @@ module RAMF::ActionControllerExtensions
       
       def is_amf
         request_amf ? true : false
+      end
+      
+      def exception_happend?
+        !rescued_exception.nil?
       end
       
       
