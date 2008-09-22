@@ -6,8 +6,7 @@ class RamfController < ActionController::Base
     respond_to do |format|
       format.html
       format.amf do
-        amf = RAMF::Rails::Gateway.new.process(request,response)
-        render :text=>amf.inspect
+        send_data(RAMF::Rails::Gateway.new.process(request,response), :type=>"application/x-amf")
       end
     end
   end
