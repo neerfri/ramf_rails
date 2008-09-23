@@ -2,7 +2,7 @@ class RAMF::Rails::Gateway
   
   def process(request, response)
     @request, @response = request, response
-    @request_amf = RAMF::Deserializer::Base.new(request.request_parameters["file"]).process
+    @request_amf = RAMF::Deserializer::Base.new(request.body).process
     @response_amf = RAMF::AMFObject.new(:version=>@request_amf.version)
     @request_amf.messages.each {|amf_m| @response_amf.add_message(invoke_action(amf_m))}
     RAMF::Serializer::Base.new(3).write(@response_amf)
@@ -32,6 +32,9 @@ class RAMF::Rails::Gateway
     service.ramf_params = Array(amf_message.value)
     service.process(req, res)
     if service.exception_happend?
+      RAILS_DEFAULT_LOGGER.info "Exception: #{service.rescued_exception.class}: #{service.rescued_exception.message}"
+      RAILS_DEFAULT_LOGGER.info service.rescued_exception.backtrace.join("\n")
+      
       RAMF::AMFMessage.new :target_uri=>amf_message.response_uri + "/onStatus",
                            :response_uri=>"",
                            :value=>service.rescued_exception
