@@ -18,13 +18,13 @@ module RAMF::ActionControllerExtensions
       end
       alias_method_chain :render, :amf
       
-      def rescue_action_with_amf(e)
-        respond_to do |format|
-          format.amf {@rescued_exception = e}
-          format.html {rescue_action_without_amf(e)}
-        end
-      end
-      alias_method_chain :rescue_action, :amf
+#      def rescue_action_with_amf(e)
+#        respond_to do |format|
+#          format.amf {@rescued_exception = e}
+#          format.html {rescue_action_without_amf(e)}
+#        end
+#      end
+#      alias_method_chain :rescue_action, :amf
       
       
       
