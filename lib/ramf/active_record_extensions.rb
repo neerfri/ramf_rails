@@ -9,6 +9,10 @@ module RAMF::ActiveRecordExtensions
         self.name=="ActiveRecord::Base" ? [] : column_names.map(&:to_sym)
       end
       
+      flex_members_reader do |instance, member|
+        instance.class.column_names.include?(member.to_s) ? instance[member] : instance.send(member)
+      end
+      
     end
   end
   
