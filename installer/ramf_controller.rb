@@ -1,6 +1,6 @@
 class RamfController < ActionController::Base
   
-  before_filter {|c| c.format=:amf if /x-amf/ =~ c.request.env['CONTENT_TYPE']}
+  before_filter {|c| c.request.format=:amf if /x-amf/ =~ c.request.env['CONTENT_TYPE']}
   
   def gateway
     respond_to do |format|
@@ -10,6 +10,5 @@ class RamfController < ActionController::Base
       end
     end
   end
-  
   
 end
