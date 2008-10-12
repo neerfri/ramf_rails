@@ -10,7 +10,16 @@ module RAMF::ActiveRecordExtensions
       end
       
       flex_members_reader do |instance, member|
-        instance.class.column_names.include?(member.to_s) ? instance[member] : instance.send(member)
+        if instance.respond_to?(:proxy_target)
+          instance = instance.send(:load_target)
+        end
+        if instance.respond_to?(member)
+          instance.send(member)
+        elsif instance.class.column_names.include?(member.to_s)
+          instance[member]
+        else
+          instance.instance_variable_get("@#{member}")
+        end
       end
       
       flex_members_writer do |obj, key, value|

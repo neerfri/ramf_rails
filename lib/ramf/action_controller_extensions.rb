@@ -2,7 +2,7 @@ module RAMF::ActionControllerExtensions
   
   def self.included(klass)
     klass.class_eval do
-      attr_reader :render_amf, :rescued_exception
+      attr_reader :render_amf, :rescued_exception, :amf_scope
       attr_accessor :request_amf
       attr_accessor :ramf_params
       alias_method :rubyamf_params, :ramf_params #TODO: remove if not needed

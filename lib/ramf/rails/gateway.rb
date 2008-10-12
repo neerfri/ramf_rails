@@ -5,7 +5,7 @@ class RAMF::Rails::Gateway
     @request_amf = RAMF::Deserializer::Base.new(request.body).process
     @response_amf = RAMF::AMFObject.new(:version=>@request_amf.version)
     @request_amf.messages.each {|amf_m| @response_amf.add_message(invoke_action(amf_m))}
-    RAMF::Serializer::Base.new(3).write(@response_amf)
+    RAMF::Serializer::Base.new(3).write(@response_amf, @scope)
   end
   
   def invoke_action(amf_message)
@@ -31,6 +31,9 @@ class RAMF::Rails::Gateway
     service.request_amf = @request_amf
     service.ramf_params = Array(amf_message.value)
     service.process(req, res)
+    @request.session.data.merge!(service.request.session.data)
+    @scope = service.amf_scope || RAMF::Configuration::DEFAULT_SCOPE
+    RAILS_DEFAULT_LOGGER.info "Serializing response in scope:#{@scope}"
     if service.exception_happend?
       RAILS_DEFAULT_LOGGER.info "Exception: #{service.rescued_exception.class}: #{service.rescued_exception.message}"
       RAILS_DEFAULT_LOGGER.info service.rescued_exception.backtrace.join("\n")
