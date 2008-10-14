@@ -4,7 +4,6 @@ class RAMF::Rails::Gateway
     @request, @response = request, response
     @request_amf = RAMF::Deserializer::Base.new(request.body).process
     @response_amf = @request_amf.process(self)
-    debugger
     RAMF::Serializer::Base.new.write(@response_amf, @scope || RAMF::Configuration::DEFAULT_SCOPE)
   end
   
