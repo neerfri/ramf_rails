@@ -1,11 +1,10 @@
 class RAMF::Rails::Gateway
   
   def process(request, response)
-    RAMF::OperationProcessorsManger.add_operation_processor(RAMF::Rails::LoginProcessor)
-    RAMF::OperationProcessorsManger.add_operation_processor(RAMF::Rails::ActionProcessor)
     @request, @response = request, response
     @request_amf = RAMF::Deserializer::Base.new(request.body).process
     @response_amf = @request_amf.process
+    debugger
     RAMF::Serializer::Base.new.write(@response_amf, @scope || RAMF::Configuration::DEFAULT_SCOPE)
   end
   
@@ -51,6 +50,7 @@ class RAMF::Rails::Gateway
 end
 
 class RAMF::Rails::ActionProcessor
+  RAMF::OperationProcessorsManger.add_operation_processor(RAMF::Rails::ActionProcessor)
   def self.will_process?(operation)
     #handle any regular remoting_message and any non messaging amf requests
     operation.remoting_message? || !operation.messaging?
@@ -74,6 +74,7 @@ class RAMF::Rails::ActionProcessor
     end
     service.request_amf = @request_amf
     service.ramf_params = Array(operations.args)
+    service.credentials = operation.credentials
     service.process(req, res)
     @scope = service.amf_scope || RAMF::Configuration::DEFAULT_SCOPE
     if service.exception_happend?
@@ -85,6 +86,7 @@ class RAMF::Rails::ActionProcessor
 end
 
 class RAMF::Rails::LoginProcessor
+  RAMF::OperationProcessorsManger.add_operation_processor(RAMF::Rails::LoginProcessor)
   def self.will_process?(operation)
     operation.messaging? && operation.login?
   end
