@@ -1,5 +1,5 @@
 class RAMF::Rails::ActionProcessor
-  RAMF::OperationProcessorsManger.add_operation_processor(self)
+  RAMF::OperationProcessorsManager.add_operation_processor(self)
   
   class << self
     
