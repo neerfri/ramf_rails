@@ -19,13 +19,13 @@ class RAMF::Rails::ActionProcessor
       rescue ActionController::RoutingError=>e
         raise(RAMF::Rails::CouldNotLoadService, "Unable to find class file for #{operation.service}")
       end
-      if service.private_methods.include?(action)
-        raise(RAMF::Rails::ServiceMethodIsPublic, "The method {#{action}} in class {#{service.class}} is declared as private, it must be defined as public to access it.")
-      elsif !service.public_methods(true).include?(action)
-        raise(RAMF::Rails::MethodNotDefinedInService, "The method {#{action}} in class {#{service.class}} is not declared.")
+      if service.private_methods.include?(operation.method)
+        raise(RAMF::Rails::ServiceMethodIsPublic, "The method {#{operation.method}} in class {#{service.class}} is declared as private, it must be defined as public to access it.")
+      elsif !service.public_methods(true).include?(operation.method)
+        raise(RAMF::Rails::MethodNotDefinedInService, "The method {#{operation.method}} in class {#{service.class}} is not declared.")
       end
       service.request_amf = incoming_amf_object
-      service.ramf_params = Array(operations.args)
+      service.ramf_params = Array(operation.args)
       service.credentials = operation.credentials
       service.process(req, res)
       #TODO: need to implement scope saving
