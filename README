@@ -3,6 +3,82 @@ Ramf RoR plugin
 This plug-in is used to integrate RAMF in to the rails framework.
 
 
+
+Usage
+=====
+
+install RAMF gem: (I assume git-hub source is already defined)
+sudo gem install neerfri-ramf
+
+intall RAMF rails plugin:
+script/plugin intall git://github.com/neerfri/ramf_rails.git
+
+this will install 3 files in your application (except for the plugin directory)
+1. app/controllers/ramf_controller.rb - This is the controller to direct the flash to (/ramf/gateway)
+2. app/views/ramf/gateway.html.erb - This is a small HTML to check that the gateway is working
+3. config/initializers/ramf_initializer.rb - a file to place RAMF configuration and initialize options
+
+Flash
+-----
+On the flash side you should set your destination to "http://my.site.com/ramf/gateway".
+When declaring service name in flash you can use either "AccountsController" or "Accounts".
+
+
+Rails
+-----
+In controller actions, few new methods exist:
+1. ramf_params - An array with the parameters passed from the flash when action was called.
+2. is_amf - Will return true if the action is processed in amf format.
+3. credentials - A hash with the credentials sent from flash with the current request (or {:userid => nil, :password => nil} when flash didn't send any).
+
+You can also use the following idiom (which could bring you to very DRY code):
+def index
+  @accounts = Acount.find :all
+  respond_to do |format|
+    format.amf {render :amf=>@accounts}
+    format.xml {render :xml=>@accounts.to_xml}
+    format.html {render} #you know... the default.
+  end
+end
+
+Every action processed via AMF must call "render :amf=>@something", otherwise a nil will be returned to the client.
+
+Scopes
+------
+RAMF enables us to transfer an object to the client in different scopes.
+for example, when a users asks to see his account page we would want to:
+@@@
+render :amf=>@account, :scope=>:full
+@@@
+the :full scope is defined in the class Account (refer to RAMF documentation to see how).
+in this example it will render the @account object with all it's parameters so the user can see them (email, address,...)
+
+
+when the user wants to see information about his friend you would want to:
+@@@
+render :amf=>@account, :scope=>:friend
+@@@ 
+In the model you would define this scope to show all the attributes you want friends to see on each other.
+
+when looking at the list of all users in the system:
+@@@
+render :amf=>@accounts, :scope=>:public
+@@@
+well, you could guess here...
+
+Notice that this can be used both for privacy reasons and to optimize serialization time and data size. 
+
+RemoteObject
+------------
+RAMF and RAMF rails plugin currently has partial support for FlexMessaging, 
+working with messaging requires no special treatment, unless using the login and logout features of RemoteObject.
+When using remoteObject.setCredentials(...) you need to define a handler to process these login requests.
+
+TODO: Should place here a link to a guide to writing login processor 
+    
+
+
+
 Example
 =======
 
