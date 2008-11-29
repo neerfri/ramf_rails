@@ -10,7 +10,7 @@ Usage
 install RAMF gem: (I assume git-hub source is already defined)
 sudo gem install neerfri-ramf
 
-intall RAMF rails plugin:
+install RAMF rails plugin:
 script/plugin intall git://github.com/neerfri/ramf_rails.git
 
 this will install 3 files in your application (except for the plugin directory)
