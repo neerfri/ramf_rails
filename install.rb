@@ -11,6 +11,8 @@ begin
   create_file_unless_exists!('config/initializers/ramf_initializer.rb')
   create_file_unless_exists!('app/controllers/ramf_controller.rb')
   create_file_unless_exists!('app/views/ramf/gateway.html.erb')
+  create_file_unless_exists!('public/images/ramf_alive.png')
+  create_file_unless_exists!('public/images/ramf_back.jpg')
   
   
 rescue Exception=>e
