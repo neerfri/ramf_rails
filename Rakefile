@@ -16,8 +16,8 @@ end
 Rake::RDocTask.new do |rd|
   rd.main = "README"
   rd.rdoc_dir = "doc"
-  rdoc.title    = 'Ramf'
-  rdoc.options << '--line-numbers' << '--inline-source'
+  rd.title    = 'Ramf'
+  rd.options << '--line-numbers' << '--inline-source'
   rd.rdoc_files.include("README", "lib/**/*.rb")
 end
 
