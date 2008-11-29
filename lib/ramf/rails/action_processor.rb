@@ -26,6 +26,9 @@ class RAMF::Rails::ActionProcessor
       end
       service.request_amf = incoming_amf_object
       service.ramf_params = Array(operation.args)
+      if service.ramf_params.size == 1 && service.ramf_params.first.kind_of?(RAMF::FlexObjects::FlexAnonymousObject)
+        service.params = service.ramf_params.first.to_hash
+      end
       service.credentials = operation.credentials
       service.process(req, res)
       #TODO: need to implement scope saving
