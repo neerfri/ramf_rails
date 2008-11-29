@@ -10,6 +10,8 @@ begin
   remove_file!('config/initializers/ramf_initializer.rb', false)
   remove_file!('app/controllers/ramf_controller.rb', false)
   remove_file!('app/views/ramf/gateway.html.erb')
+  remove_file!('public/images/ramf_alive.png', false)
+  remove_file!('public/images/ramf_back.jpg', false)
   
   
 rescue Exception=>e
