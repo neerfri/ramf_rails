@@ -9,13 +9,17 @@ class RAMF::Rails::ActionProcessor
     end
     
     def process(operation, request, response, incoming_amf_object)
-      path = "/#{operation.service.gsub("Controller","").gsub("::","/").underscore}/#{operation.method}"
+      controller = operation.service.gsub(/Controller$/,"")
+      controller_in_path = controller.gsub("::","/").underscore
+      path = "/#{controller_in_path}/#{operation.method}"
       req = request.clone
+      req.unmemoize_all if req.respond_to?(:unmemoize_all) #this will handle Rails 2.2.2 memoization
       res = response.clone
       req.env["PATH_INFO"] = req.env["REQUEST_PATH"] = req.env["REQUEST_URI"] = path
       req.env['HTTP_ACCEPT'] = 'application/x-amf'
       begin
-        service = ActionController::Routing::Routes.recognize(req).new
+        service = "#{controller}Controller".constantize.new
+        req.path_parameters = {:controller=>controller_in_path, :action=>operation.method}
       rescue ActionController::RoutingError=>e
         raise(RAMF::Rails::CouldNotLoadService, "Unable to find class file for #{operation.service}")
       end
@@ -25,11 +29,11 @@ class RAMF::Rails::ActionProcessor
         raise(RAMF::Rails::MethodNotDefinedInService, "The method {#{operation.method}} in class {#{service.class}} is not declared.")
       end
       service.request_amf = incoming_amf_object
-      service.ramf_params = Array(operation.args)
-      if service.ramf_params.size == 1 && service.ramf_params.first.kind_of?(RAMF::FlexObjects::FlexAnonymousObject)
-        service.params = service.ramf_params.first.to_hash
-      end
       service.credentials = operation.credentials
+      
+      args = Array(operation.args)
+      service.ramf_params = args
+      args.first.to_params.each {|k,v| req.parameters[k] = v} if args.size==1 && args.first.respond_to?(:to_params)
       service.process(req, res)
       #TODO: need to implement scope saving
   #    @scope = service.amf_scope || RAMF::Configuration::DEFAULT_SCOPE
