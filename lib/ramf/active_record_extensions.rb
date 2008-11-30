@@ -11,7 +11,8 @@ module RAMF::ActiveRecordExtensions
       
       flex_members_reader do |instance, member|
         if instance.respond_to?(:proxy_target)
-          instance = instance.send(:load_target)
+          instance.reload unless instance.loaded?
+          instance = instance.proxy_target
         end
         if instance.respond_to?(member)
           instance.send(member)
