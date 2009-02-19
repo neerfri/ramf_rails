@@ -7,6 +7,7 @@ begin
   require 'ramf/active_record_extensions'
   require 'ramf/configuration'
   require 'ramf/rails/action_processor'
+  require 'ramf/rails/ramf_controller_logic'
   ActionController::Base.send(:include, RAMF::ActionControllerExtensions)
   ActiveRecord::Base.send(:include, RAMF::ActiveRecordExtensions) if defined?(ActiveRecord::Base)
 #rescue NameError => e
