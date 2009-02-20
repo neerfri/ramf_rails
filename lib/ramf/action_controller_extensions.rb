@@ -19,6 +19,15 @@ module RAMF::ActionControllerExtensions
       end
       alias_method_chain :render, :amf
       
+      def logger_with_ramf
+        if is_amf
+          LoggerFilter.new(logger_without_ramf)
+        else
+          logger_without_ramf
+        end
+      end
+      alias_method_chain :logger, :ramf
+
       def is_amf
         request_amf ? true : false
       end
