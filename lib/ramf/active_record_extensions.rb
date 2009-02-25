@@ -27,10 +27,12 @@ module RAMF::ActiveRecordExtensions
         if obj.class.column_names.include?(key.to_s)
           #the member is a column in the table
           obj.send("#{key}=", value) unless value.is_a?(Float) && value.nan?
-        elsif (reflection = obj.class.reflect_on_association(key))
-          unless !RAMF::Configuration.SET_AR_NIL_ASSOCIATIONS && value.nil?
+        elsif (reflection = obj.class.reflections.keys.include?(key.to_sym))
+          unless !RAMF::Configuration::SET_AR_NIL_ASSOCIATIONS && value.nil?
             obj.send("#{key}=", value)
           end
+        elsif obj.respond_to?("#{key}=")
+          obj.send("#{key}=", value)
         end
       end
       
